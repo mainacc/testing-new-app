@@ -1,0 +1,16 @@
+{
+  "name": "BuildRight Liquid Glass Timesheets",
+  "short_name": "BuildRight",
+  "description": "An iOS-inspired, offline-ready construction timesheet PWA with crew, project, and export tooling.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#2f6ff7",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ]
+}

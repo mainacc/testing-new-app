@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2f6ff7" />
+    <title>BuildRight Liquid Glass Timesheets</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="liquid-field" aria-hidden="true">
+      <div class="liquid-orb orb-one"></div>
+      <div class="liquid-orb orb-two"></div>
+      <div class="liquid-orb orb-three"></div>
+    </div>
+
+    <div class="app-shell">
+      <div class="app-chrome">
+        <div class="status-bar" aria-hidden="true">
+          <span class="status-time">9:41</span>
+          <div class="status-glyphs">
+            <span class="glyph signal"></span>
+            <span class="glyph wifi"></span>
+            <span class="glyph battery"></span>
+          </div>
+        </div>
+
+        <header class="app-header card glass">
+          <div class="brand">
+            <span class="brand-mark" aria-hidden="true">BR</span>
+            <div>
+              <p class="eyebrow">BuildRight Field Suite</p>
+              <h1>Liquid Glass Timesheets</h1>
+              <p class="intro">
+                Track crews, projects, and billable hours with an interface that
+                feels native to the latest iOS.
+              </p>
+            </div>
+          </div>
+          <button id="installButton" class="tint-button" type="button">
+            <span class="dot"></span>
+            Add to Home Screen
+          </button>
+        </header>
+
+        <section class="summary-cards" aria-label="Totals overview">
+          <article class="card glass">
+            <span class="label">Logged hours</span>
+            <strong id="totalHours">0</strong>
+            <span class="hint">Across all entries</span>
+          </article>
+          <article class="card glass">
+            <span class="label">Active projects</span>
+            <strong id="projectCount">0</strong>
+            <span class="hint">Jobs on the go</span>
+          </article>
+          <article class="card glass">
+            <span class="label">Crew members</span>
+            <strong id="employeeCount">0</strong>
+            <span class="hint">Ready to schedule</span>
+          </article>
+        </section>
+
+        <main>
+        <section class="route active" data-section="log">
+          <header class="section-header">
+            <div>
+              <h2>Daily log</h2>
+              <p>Track who worked, where, and what was completed.</p>
+            </div>
+          </header>
+
+          <form id="entryForm" class="card form-grid" autocomplete="off">
+            <h3>Log new hours</h3>
+            <label>
+              <span>Date</span>
+              <input type="date" name="date" required />
+            </label>
+            <label>
+              <span>Team member</span>
+              <select name="employeeId" required>
+                <option value="">Select crew</option>
+              </select>
+            </label>
+            <label>
+              <span>Project</span>
+              <select name="projectId" required>
+                <option value="">Select project</option>
+              </select>
+            </label>
+            <label>
+              <span>Hours</span>
+              <input type="number" name="hours" min="0" step="0.25" required />
+            </label>
+            <label>
+              <span>Task</span>
+              <input type="text" name="task" placeholder="E.g. framing, pour, cleanup" />
+            </label>
+            <label class="full">
+              <span>Notes</span>
+              <textarea name="notes" rows="2" placeholder="Weather, materials, crew notes"></textarea>
+            </label>
+            <label class="switch full">
+              <input type="checkbox" name="billable" checked />
+              <span>Billable work</span>
+            </label>
+            <div class="form-actions full">
+              <button type="submit" class="primary">Save entry</button>
+            </div>
+          </form>
+
+          <section class="card filters" aria-label="Entry filters">
+            <h3>Filter log</h3>
+            <form id="filterForm" class="form-grid compact" autocomplete="off">
+              <label>
+                <span>Team member</span>
+                <select name="employeeId">
+                  <option value="">All crew</option>
+                </select>
+              </label>
+              <label>
+                <span>Project</span>
+                <select name="projectId">
+                  <option value="">All projects</option>
+                </select>
+              </label>
+              <label>
+                <span>Billable</span>
+                <select name="billable">
+                  <option value="">Billable + non-billable</option>
+                  <option value="true">Billable</option>
+                  <option value="false">Non-billable</option>
+                </select>
+              </label>
+              <label>
+                <span>From</span>
+                <input type="date" name="from" />
+              </label>
+              <label>
+                <span>To</span>
+                <input type="date" name="to" />
+              </label>
+              <div class="form-actions full">
+                <button type="reset" class="ghost-button">Reset</button>
+              </div>
+            </form>
+          </section>
+
+          <div id="entryEmptyState" class="empty-state card">
+            <h3>No time logged yet</h3>
+            <p>Start by adding your crew, projects, then create an entry above.</p>
+          </div>
+          <div id="entryList" class="entry-list" aria-live="polite"></div>
+        </section>
+
+        <section class="route" data-section="team">
+          <header class="section-header">
+            <div>
+              <h2>Crew</h2>
+              <p>Keep an up-to-date roster of everyone on site.</p>
+            </div>
+          </header>
+          <form id="employeeForm" class="card form-grid" autocomplete="off">
+            <h3>Add crew member</h3>
+            <label>
+              <span>Name</span>
+              <input type="text" name="name" required />
+            </label>
+            <label>
+              <span>Role</span>
+              <input type="text" name="role" placeholder="Foreman, carpenter, laborer" />
+            </label>
+            <div class="form-actions full">
+              <button type="submit" class="primary">Add crew</button>
+            </div>
+          </form>
+          <ul id="employeeList" class="stack-list card"></ul>
+        </section>
+
+        <section class="route" data-section="projects">
+          <header class="section-header">
+            <div>
+              <h2>Projects</h2>
+              <p>Capture job details for hours to roll into.</p>
+            </div>
+          </header>
+          <form id="projectForm" class="card form-grid" autocomplete="off">
+            <h3>Add project</h3>
+            <label>
+              <span>Project name</span>
+              <input type="text" name="name" required />
+            </label>
+            <label>
+              <span>Client</span>
+              <input type="text" name="client" placeholder="Customer or GC" />
+            </label>
+            <label>
+              <span>Location</span>
+              <input type="text" name="location" placeholder="Job site" />
+            </label>
+            <div class="form-actions full">
+              <button type="submit" class="primary">Add project</button>
+            </div>
+          </form>
+          <ul id="projectList" class="stack-list card"></ul>
+        </section>
+
+        <section class="route" data-section="reports">
+          <header class="section-header">
+            <div>
+              <h2>Reports &amp; exports</h2>
+              <p>Use your current filters to pull payroll or client CSVs.</p>
+            </div>
+          </header>
+          <div class="card report-summary">
+            <h3>Filtered totals</h3>
+            <dl>
+              <div>
+                <dt>Entries</dt>
+                <dd id="reportEntryCount">0</dd>
+              </div>
+              <div>
+                <dt>Hours</dt>
+                <dd id="reportHourTotal">0</dd>
+              </div>
+              <div>
+                <dt>Billable hours</dt>
+                <dd id="reportBillable">0</dd>
+              </div>
+            </dl>
+            <p class="hint">Adjust filters on the Daily log to refine this view.</p>
+          </div>
+          <div class="card report-actions">
+            <h3>Export</h3>
+            <p>Downloads respect the filters you have set.</p>
+            <div class="button-row">
+              <button id="exportPayroll" class="primary" type="button">Payroll CSV</button>
+              <button id="exportClient" type="button">Client CSV</button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <nav class="tab-bar glass" aria-label="Primary">
+        <button class="active" type="button" data-route="log">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <rect x="3.5" y="5.5" width="17" height="15" rx="4" ry="4" />
+            <path d="M3.5 10.5h17" />
+            <path d="M8 3.5v4" />
+            <path d="M16 3.5v4" />
+          </svg>
+          <span>Daily log</span>
+        </button>
+        <button type="button" data-route="team">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="8" cy="9" r="3" />
+            <circle cx="16" cy="11" r="2.5" />
+            <path d="M4.5 19c.2-3 2.5-4 3.5-4s3.3 1.2 3.5 4" />
+            <path d="M13.5 18.5c.4-2 1.8-3 3.5-3 1.3 0 2.5.6 3 1.6" />
+          </svg>
+          <span>Crew</span>
+        </button>
+        <button type="button" data-route="projects">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M5 4.5h9l5 5v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2Z" />
+            <path d="M14 4.5v5h5" />
+            <path d="M8.5 13.5h7" />
+            <path d="M8.5 17.5h7" />
+          </svg>
+          <span>Projects</span>
+        </button>
+        <button type="button" data-route="reports">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M4 20h16" />
+            <rect x="6.2" y="11" width="2.6" height="6" rx="1.2" />
+            <rect x="10.7" y="8.5" width="2.6" height="8.5" rx="1.2" />
+            <rect x="15.2" y="6" width="2.6" height="11" rx="1.2" />
+          </svg>
+          <span>Reports</span>
+        </button>
+      </nav>
+    </div>
+  </div>
+
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>
